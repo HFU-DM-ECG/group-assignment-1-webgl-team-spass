@@ -103,6 +103,7 @@ loader.load('assets/airship.glb', function (gltf) {
     airship.children[0].castShadow = true;
     airship.children[0].receiveShadow = true;
     scene.add(airship);
+    airship.rotateY(-1.5);
 }, undefined, function (error) {
 
 	console.error(error);
@@ -133,7 +134,7 @@ function fly(object) {
     object.quaternion.y = camera.quaternion.y;
     object.setRotationFromQuaternion(camera.quaternion);
 }
-function flyLoop(object, currentTime) {
+function flyLoopBezier(object, currentTime) {
     const bezierPath = new THREE.CubicBezierCurve(
         new THREE.Vector3(0,0,0),
         new THREE.Vector3(1,0,1),
@@ -141,6 +142,21 @@ function flyLoop(object, currentTime) {
         new THREE.Vector3(-1,0,1),
         new THREE.Vector3(0,1,1),
     )
+}
+function flyLoop(object, midPosition, currentTime, timescale, x_amp, y_amp,z_amp) {
+    if (Math.sin(currentTime*timescale/2)>0){
+        const oldPosition = new THREE.Vector3(object.position.x,object.position.y,object.position.z);
+    
+        object.position.x = midPosition.x+Math.sin(currentTime*timescale)*x_amp;
+        object.position.y = midPosition.y+Math.cos(currentTime*timescale)*y_amp;
+        object.position.z = midPosition.z+Math.cos(currentTime*timescale)*z_amp-z_amp;
+    
+        object.lookAt(oldPosition);
+    } else {        
+        object.position.x = midPosition.x+Math.sin(0)*x_amp;
+        object.position.y = midPosition.y+Math.cos(0)*y_amp;
+        object.position.z = midPosition.z+Math.cos(0)*z_amp-z_amp;
+    }
 }
 
 
@@ -172,7 +188,7 @@ function animate() {
         fly(airship);
     } else {
         //loop animation
-        flyLoop(airship,time);
+        flyLoop(airship, new THREE.Vector3(-1.5,-.1,1.55) ,time, .5, 2.5, .5, 2);
     }
 
     //Rendering
