@@ -136,7 +136,7 @@ function sunCycle(object, floatingFrequency, amplitude, currentTime) {
 }
 
 function fly(object) {//flying around with an object tied to the camera
-    const offsetVector = new THREE.Vector3(-0.1,-0.6,-0.1); //offset relative to camera
+    const offsetVector = new THREE.Vector3(-0.25,-1.3,-0.25); //offset relative to camera
     offsetVector.applyQuaternion(camera.quaternion);
     object.position.x = camera.position.x +offsetVector.x;
     object.position.y = camera.position.y +offsetVector.y;
