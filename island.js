@@ -23,7 +23,7 @@ backgroundLoader.load('https://images.pexels.com/photos/281260/pexels-photo-2812
 const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
 hemisphereLight.color.setHSL(0.6, 1, 0.6);
 hemisphereLight.groundColor.setHSL(0.095, 1, 0.75);
-hemisphereLight.position.set(0, 5, 0);
+hemisphereLight.position.set(0, 10, 0);
 scene.add(hemisphereLight)
 const hemiLightHelper = new THREE.HemisphereLightHelper(hemisphereLight, 1);
 hemiLightHelper.visible = true;
@@ -60,8 +60,8 @@ flyControls.movementSpeed = 0.01;
 flyControls.dragToLook = true;
 
 
-camera.position.z = 5;
-camera.position.y = 2;
+camera.position.z = 10;
+camera.position.y = 5;
 
 //object loading
 const island1 = new THREE.Object3D();
@@ -73,37 +73,41 @@ const loader = new GLTFLoader();
 
 var flyMode = false;
 
-loader.load('assets/insel.glb', function (gltf) {
+loader.load('models/insel.glb', function (gltf) {
 
     island1.add(gltf.scene.children[0]);
-    island1.children[0].castShadow = true;
-    island1.children[0].receiveShadow = true;
+    island1.children[0].children[0].castShadow = true;
+    island1.children[0].children[0].receiveShadow = true;
     island1.name = "island1";
     scene.add(island1);
 
     island2.add(gltf.scene.children[0]);
-    island2.children[0].castShadow = true;
-    island2.children[0].receiveShadow = true;
+    island2.children[0].children[0].castShadow = true;
+    island2.children[0].children[0].receiveShadow = true;
     island2.name = "island2";
     scene.add(island2);
 
     island3.add(gltf.scene.children[0]);
-    island3.children[0].castShadow = true;
-    island3.children[0].receiveShadow = true;
+    island3.children[0].children[0].castShadow = true;
+    island3.children[0].children[0].receiveShadow = true;
     island3.name = "island3";
     scene.add(island3);
+    island1.scale.set(3, 3, 3);
+    island2.scale.set(3, 3, 3);
+    island3.scale.set(3, 3, 3);
 }, undefined, function (error) {
 
 	console.error(error);
 
 } );
-loader.load('assets/airship.glb', function (gltf) {
+loader.load('models/airship.glb', function (gltf) {
     airship.add(gltf.scene.children[0]);
     airship.name = "airship";
-    airship.children[0].castShadow = true;
-    airship.children[0].receiveShadow = true;
+    airship.children[0].children[0].castShadow = true;
+    airship.children[0].children[0].receiveShadow = true;
     scene.add(airship);
-    airship.rotateY(-1.5);
+    airship.scale.set(2, 2, 2);
+    airship.rotateY(1.49);
 }, undefined, function (error) {
 
 	console.error(error);
