@@ -21,7 +21,7 @@ backgroundLoader.load('https://images.pexels.com/photos/281260/pexels-photo-2812
 //light
 ///light from the sky
 const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
-hemisphereLight.color.setHSL(0.6, 1, 0.6);
+hemisphereLight.color.setHSL(0.6, 1, 1);
 hemisphereLight.groundColor.setHSL(0.095, 1, 0.75);
 hemisphereLight.position.set(0, 10, 0);
 scene.add(hemisphereLight)
@@ -31,8 +31,8 @@ scene.add(hemiLightHelper);
 
 ///light from the sun
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.color.setHSL(0.1, 1, 0.95);
-directionalLight.position.set(0, 10, -0);
+directionalLight.color.setHSL(0.9, 1, 0.9);
+directionalLight.position.set(-2.5, 10, -2.5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 2048
 ///shadows from the sun
@@ -120,13 +120,19 @@ function floating(object, floatingFrequency, amplitude, currentTime) { // object
 }
 
 function sunCycle(object, floatingFrequency, amplitude, currentTime) {
+    // rotating the light around
     const scalingFactor = 1/750;
     var positionX = object.position.x;
     var positionY = object.position.y;
     var positionZ = object.position.z;
     object.position.x = positionX+(Math.sin(currentTime*floatingFrequency)*scalingFactor*amplitude);
-    object.position.y = positionY+(Math.sin(currentTime*floatingFrequency)*scalingFactor*amplitude); // TODO: Fix
+    object.position.y = positionY+(Math.sin(currentTime*floatingFrequency)*scalingFactor*amplitude);
     object.position.z = positionZ+(Math.cos(currentTime*floatingFrequency)*scalingFactor*amplitude);
+
+    // change light intensity based on sun position
+    var hemisphereLightValue = positionY * amplitude * scalingFactor;
+    hemisphereLight.color.setHSL(0.6, 1, hemisphereLightValue);
+    hemisphereLight.groundColor.setHSL(0.1, 1, hemisphereLightValue);
 }
 
 function fly(object) {//flying around with an object tied to the camera
@@ -170,7 +176,7 @@ function animate() {
     floating(island1,1,1,time);
     floating(island2,1.5,1,time);
     floating(island3,2.2,2,time);
-    sunCycle(directionalLight, 1, 45, time);
+    sunCycle(directionalLight, 0.75, 45, time);
 
     //toggle mode : toggle between flying around with the airship yourself and watching it fly in circles around the islands
     document.addEventListener("keydown", onDocumentKeyDown, false);
