@@ -73,9 +73,9 @@ const loader = new GLTFLoader();
 
 var flyMode = false;
 
-loader.load('models/insel.glb', function (gltf) {
+loader.load('models/insel.glb', function (gltf) { //loading in the 3D models saving them into usable variiables and adding them to the scene.
 
-    island1.add(gltf.scene.children[0]);
+    island1.add(gltf.scene.children[0]); // its always children[0] because the child gets removed from gltf.scene once you add it to the actual scene
     island1.children[0].children[0].castShadow = true;
     island1.children[0].children[0].receiveShadow = true;
     island1.name = "island1";
@@ -107,13 +107,13 @@ loader.load('models/airship.glb', function (gltf) {
     airship.children[0].children[0].receiveShadow = true;
     scene.add(airship);
     airship.scale.set(2, 2, 2);
-    airship.rotateY(1.49);
+    airship.rotateY(-1.49);
 }, undefined, function (error) {
 
 	console.error(error);
 });
 
-function floating(object, floatingFrequency, amplitude, currentTime) {
+function floating(object, floatingFrequency, amplitude, currentTime) { // object floating up and down
     const scalingFactor = 1/1000;
     var midPosition = object.position.y;
     object.position.y = midPosition+(Math.sin(currentTime*floatingFrequency)*scalingFactor*amplitude);
@@ -129,8 +129,8 @@ function sunCycle(object, floatingFrequency, amplitude, currentTime) {
     object.position.z = positionZ+(Math.cos(currentTime*floatingFrequency)*scalingFactor*amplitude);
 }
 
-function fly(object) {
-    const offsetVector = new THREE.Vector3(-0.1,-0.6,-0.1);
+function fly(object) {//flying around with an object tied to the camera
+    const offsetVector = new THREE.Vector3(-0.1,-0.6,-0.1); //offset relative to camera
     offsetVector.applyQuaternion(camera.quaternion);
     object.position.x = camera.position.x +offsetVector.x;
     object.position.y = camera.position.y +offsetVector.y;
@@ -138,16 +138,7 @@ function fly(object) {
     object.quaternion.y = camera.quaternion.y;
     object.setRotationFromQuaternion(camera.quaternion);
 }
-function flyLoopBezier(object, currentTime) {
-    const bezierPath = new THREE.CubicBezierCurve(
-        new THREE.Vector3(0,0,0),
-        new THREE.Vector3(1,0,1),
-        new THREE.Vector3(1,0,-1),
-        new THREE.Vector3(-1,0,1),
-        new THREE.Vector3(0,1,1),
-    )
-}
-function flyLoop(object, midPosition, currentTime, timescale, x_amp, y_amp,z_amp) {
+function flyLoop(object, midPosition, currentTime, timescale, x_amp, y_amp,z_amp) { // objectswitching between flying in circles and staying at one position for equal times
     if (Math.sin(currentTime*timescale/2)>0){
         const oldPosition = new THREE.Vector3(object.position.x,object.position.y,object.position.z);
     
@@ -162,6 +153,8 @@ function flyLoop(object, midPosition, currentTime, timescale, x_amp, y_amp,z_amp
         object.position.z = midPosition.z+Math.cos(0)*z_amp-z_amp;
     }
 }
+function flyLoopBezier(object, currentTime) { // alternative to flyLoop in circles
+}
 
 
 function animate() {
@@ -170,16 +163,16 @@ function animate() {
     // const deltaTime = currentTime - time;
     time = currentTime;
     
-    //Fly Control
+    //Fly Control for the camera
     flyControls.update(1);
 
-    //animation
+    //animation: islands floating up and down in different intervals
     floating(island1,1,1,time);
     floating(island2,1.5,1,time);
     floating(island3,2.2,2,time);
     sunCycle(directionalLight, 1, 45, time);
 
-    //toggle mode
+    //toggle mode : toggle between flying around with the airship yourself and watching it fly in circles around the islands
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
@@ -192,7 +185,7 @@ function animate() {
         fly(airship);
     } else {
         //loop animation
-        flyLoop(airship, new THREE.Vector3(-1.5,-.1,1.55) ,time, .5, 2.5, .5, 2);
+        flyLoop(airship, new THREE.Vector3(-4.15,1,4.7) ,time, .5, 6, .5, 5);
     }
 
     //Rendering
