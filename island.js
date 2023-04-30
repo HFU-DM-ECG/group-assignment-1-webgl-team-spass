@@ -2,40 +2,46 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FlyControls } from 'three/addons/controls/FlyControls.js';
 
+// camera configuration
 const FOV = 75;
 const near_plane = 0.1;
 const far_plane = 1000;
 
-var time = Date.now()/1000;
-
-//scene
+// scene
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, near_plane, far_plane);
 
-//background
+// time
+var time = Date.now() / 1000;
+
+// background
 const backgroundLoader = new THREE.TextureLoader();
-backgroundLoader.load('https://images.pexels.com/photos/281260/pexels-photo-281260.jpeg', function(texture) {
+backgroundLoader.load('https://images.pexels.com/photos/281260/pexels-photo-281260.jpeg', function (texture) {
     scene.background = texture;
 });
 
-//light
-///light from the sky
+// light
+/// light from the sky
 const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
 hemisphereLight.color.setHSL(0.6, 1, 1);
 hemisphereLight.groundColor.setHSL(0.095, 1, 0.75);
 hemisphereLight.position.set(0, 10, 0);
 scene.add(hemisphereLight)
 const hemiLightHelper = new THREE.HemisphereLightHelper(hemisphereLight, 1);
-hemiLightHelper.visible = true;
+hemiLightHelper.visible = false;
 scene.add(hemiLightHelper);
 
-///light from the sun
+/// light from the sun
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.color.setHSL(0.9, 1, 0.9);
 directionalLight.position.set(-2.5, 10, -2.5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 2048
-///shadows from the sun
+const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 1);
+directionalLightHelper.visible = false;
+scene.add(directionalLightHelper);
+
+/// shadows from the sun
 const shadowValue = 30
 directionalLight.shadow.camera.left = -shadowValue;
 directionalLight.shadow.camera.right = shadowValue;
@@ -44,38 +50,34 @@ directionalLight.shadow.camera.bottom = -shadowValue;
 directionalLight.shadow.camera.far = 3500;
 directionalLight.shadow.bias = -0.000001;
 scene.add(directionalLight);
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 1);
-directionalLightHelper.visible = true;
-scene.add(directionalLightHelper);
 
-//renderer
+// renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 var dom = renderer.domElement;
 renderer.domElement = document.getElementById("c");
 document.body.appendChild(dom);
 
+// fly controls and camera positioning
 const flyControls = new FlyControls(camera, dom);
 flyControls.movementSpeed = 0.01;
 flyControls.dragToLook = true;
-
-
 camera.position.z = 10;
 camera.position.y = 5;
 
-//object loading
+// object loading
 const island1 = new THREE.Object3D();
 const island2 = new THREE.Object3D();
 const island3 = new THREE.Object3D();
 const airship = new THREE.Object3D();
-
 const loader = new GLTFLoader();
 
-var flyMode = false;
+var flightMode = false;
 
-loader.load('models/insel.glb', function (gltf) { //loading in the 3D models saving them into usable variiables and adding them to the scene.
-
-    island1.add(gltf.scene.children[0]); // its always children[0] because the child gets removed from gltf.scene once you add it to the actual scene
+// loading in the 3D models, saving them into usable variables and adding them to the scene.
+loader.load('models/insel.glb', function (gltf) { 
+    // its always children[0] because the child gets removed from gltf.scene once you add it to the actual scene
+    island1.add(gltf.scene.children[0]); 
     island1.children[0].children[0].castShadow = true;
     island1.children[0].children[0].receiveShadow = true;
     island1.name = "island1";
@@ -95,11 +97,11 @@ loader.load('models/insel.glb', function (gltf) { //loading in the 3D models sav
     island1.scale.set(3, 3, 3);
     island2.scale.set(3, 3, 3);
     island3.scale.set(3, 3, 3);
+
 }, undefined, function (error) {
+    console.error(error);
+});
 
-	console.error(error);
-
-} );
 loader.load('models/airship.glb', function (gltf) {
     airship.add(gltf.scene.children[0]);
     airship.name = "airship";
@@ -109,25 +111,26 @@ loader.load('models/airship.glb', function (gltf) {
     airship.scale.set(2, 2, 2);
     airship.rotateY(-1.49);
 }, undefined, function (error) {
-
-	console.error(error);
+    console.error(error);
 });
 
-function floating(object, floatingFrequency, amplitude, currentTime) { // object floating up and down
-    const scalingFactor = 1/1000;
+// object floating up and down
+function floating(object, floatingFrequency, amplitude, currentTime) { 
+    const scalingFactor = 1 / 1000;
     var midPosition = object.position.y;
-    object.position.y = midPosition+(Math.sin(currentTime*floatingFrequency)*scalingFactor*amplitude);
+    object.position.y = midPosition + (Math.sin(currentTime * floatingFrequency) * scalingFactor * amplitude);
 }
 
+// sun cycling around the islands
 function sunCycle(object, floatingFrequency, amplitude, currentTime) {
     // rotating the light around
-    const scalingFactor = 1/750;
+    const scalingFactor = 1 / 750;
     var positionX = object.position.x;
     var positionY = object.position.y;
     var positionZ = object.position.z;
-    object.position.x = positionX+(Math.sin(currentTime*floatingFrequency)*scalingFactor*amplitude);
-    object.position.y = positionY+(Math.sin(currentTime*floatingFrequency)*scalingFactor*amplitude);
-    object.position.z = positionZ+(Math.cos(currentTime*floatingFrequency)*scalingFactor*amplitude);
+    object.position.x = positionX + (Math.sin(currentTime * floatingFrequency) * scalingFactor * amplitude);
+    object.position.y = positionY + (Math.sin(currentTime * floatingFrequency) * scalingFactor * amplitude);
+    object.position.z = positionZ + (Math.cos(currentTime * floatingFrequency) * scalingFactor * amplitude);
 
     // change light intensity based on sun position
     var hemisphereLightValue = positionY * amplitude * scalingFactor;
@@ -135,69 +138,85 @@ function sunCycle(object, floatingFrequency, amplitude, currentTime) {
     hemisphereLight.groundColor.setHSL(0.1, 1, hemisphereLightValue);
 }
 
-function fly(object) {//flying around with an object tied to the camera
-    const offsetVector = new THREE.Vector3(-0.25,-1.3,-0.25); //offset relative to camera
+// flying around with an object tied to the camera
+function fly(object) {
+    // offset relative to camera
+    const offsetVector = new THREE.Vector3(-0.25, -1.3, -0.25); 
     offsetVector.applyQuaternion(camera.quaternion);
-    object.position.x = camera.position.x +offsetVector.x;
-    object.position.y = camera.position.y +offsetVector.y;
-    object.position.z = camera.position.z +offsetVector.z;
+    object.position.x = camera.position.x + offsetVector.x;
+    object.position.y = camera.position.y + offsetVector.y;
+    object.position.z = camera.position.z + offsetVector.z;
     object.quaternion.y = camera.quaternion.y;
     object.setRotationFromQuaternion(camera.quaternion);
 }
-function flyLoop(object, midPosition, currentTime, timescale, x_amp, y_amp,z_amp) { // objectswitching between flying in circles and staying at one position for equal times
-    if (Math.sin(currentTime*timescale/2)>0){
-        const oldPosition = new THREE.Vector3(object.position.x,object.position.y,object.position.z);
-    
-        object.position.x = midPosition.x+Math.sin(currentTime*timescale)*x_amp;
-        object.position.y = midPosition.y+Math.cos(currentTime*timescale)*y_amp;
-        object.position.z = midPosition.z+Math.cos(currentTime*timescale)*z_amp-z_amp;
-    
+
+// objectswitching between flying in circles and staying at one position for equal times
+function flyLoop(object, midPosition, currentTime, timescale, x_amp, y_amp, z_amp) { 
+    if (Math.sin(currentTime * timescale / 2) > 0) {
+        const oldPosition = new THREE.Vector3(object.position.x, object.position.y, object.position.z);
+
+        object.position.x = midPosition.x + Math.sin(currentTime * timescale) * x_amp;
+        object.position.y = midPosition.y + Math.cos(currentTime * timescale) * y_amp;
+        object.position.z = midPosition.z + Math.cos(currentTime * timescale) * z_amp - z_amp;
+
         object.lookAt(oldPosition);
-    } else {        
-        object.position.x = midPosition.x+Math.sin(0)*x_amp;
-        object.position.y = midPosition.y+Math.cos(0)*y_amp;
-        object.position.z = midPosition.z+Math.cos(0)*z_amp-z_amp;
+    } else {
+        object.position.x = midPosition.x + Math.sin(0) * x_amp;
+        object.position.y = midPosition.y + Math.cos(0) * y_amp;
+        object.position.z = midPosition.z + Math.cos(0) * z_amp - z_amp;
     }
 }
-function flyLoopBezier(object, currentTime) { // alternative to flyLoop in circles
+
+// alternative to flyLoop in circles
+function flyLoopBezier(object, currentTime) { 
 }
 
-
 function animate() {
-    //time management
-    const currentTime = Date.now()/1000; //scaling to seconds
-    // const deltaTime = currentTime - time;
+    // time management
+    /// scaling to seconds
+    const currentTime = Date.now() / 1000; 
     time = currentTime;
-    
-    //Fly Control for the camera
+
+    // Fly Control for the camera
     flyControls.update(1);
 
-    //animation: islands floating up and down in different intervals
-    floating(island1,1,1,time);
-    floating(island2,1.5,1,time);
-    floating(island3,2.2,2,time);
+    // animation: islands floating up and down in different intervals
+    floating(island1, 1, 1, time);
+    floating(island2, 1.5, 1, time);
+    floating(island3, 2.2, 2, time);
+
+    // animation: sun moving in the sky to create shadows on the objects
     sunCycle(directionalLight, 0.75, 45, time);
 
-    //toggle mode : toggle between flying around with the airship yourself and watching it fly in circles around the islands
+    // toggle mode : toggle between flying around with the airship yourself and watching it fly in circles around the islands
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
         if (keyCode == 32) {
-            flyMode = !flyMode;
+            flightMode = !flightMode;
         }
     }
-    if (flyMode) {
-        //fly-mode
+    if (flightMode) {
+        // flight-mode
         fly(airship);
     } else {
-        //loop animation
-        flyLoop(airship, new THREE.Vector3(-4.15,1,4.7) ,time, .5, 6, .5, 5);
+        // loop animation
+        flyLoop(airship, new THREE.Vector3(-4.15, 1, 4.7), time, .5, 6, .5, 5);
     }
 
-    //Rendering
+    // rendering
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.shadowMap.enabled = true;
-	requestAnimationFrame(animate) ;
-	renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
 }
+
+// listener to toggle visibility of the lights on keypress
+document.addEventListener("keypress", (e) => {
+    if (e.code == "KeyL") {
+        directionalLightHelper.visible = !directionalLightHelper.visible;
+        hemiLightHelper.visible = !hemiLightHelper.visible;
+    }
+});
+
 animate();
