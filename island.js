@@ -89,14 +89,13 @@ function fly(object) {
     object.setRotationFromQuaternion(camera.quaternion);
 }
 function flyLoop(object, currentTime) {
-    const scalingFactor = 1/1000;
-    var midPositionx = -1.5;
-    var midPositiony = 0;
-    var midPositionz = 1.5;
-
-    object.position.x = midPositionx + (Math.sin(currentTime)*scalingFactor*2);
-    object.position.y = midPositiony + (Math.sin(currentTime)*scalingFactor*1);
-    object.position.z = midPositionz + (Math.sin(currentTime)*scalingFactor*4);
+    const bezierPath = new THREE.CubicBezierCurve(
+        new THREE.Vector3(0,0,0),
+        new THREE.Vector3(1,0,1),
+        new THREE.Vector3(1,0,-1),
+        new THREE.Vector3(-1,0,1),
+        new THREE.Vector3(0,1,1),
+    )
 }
 
 function animate() {
