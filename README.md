@@ -27,7 +27,7 @@ The models are created using 3ds Max and loaded in using the GLTFLoader from thr
 The scene is a reference to the [UNIGINE Heaven Benchmark](https://youtu.be/3PkXImE8RXo?t=223), which features multiple flying islands as well as an airship.
 
 ## Animation
-The scene features four objects, three islands and one airship. The islands are floating up and down, using an equation that takes the parameters floating frequency, amplitude and the current time to calculate the y-position of the island. 
+The scene features four objects - three islands and one airship. The islands are floating up and down, using an equation that takes the floating frequency, amplitude and the current time to calculate the y-position of the island. The frequency and the amplitude can be customized to archive different results.
 
 The airship has two modes, depending of the state of the "flight mode". If the flight mode is enabled, the user can control the airship using the FlyControls of threejs. If the flight mode is disabled, the airship flies around the island in a loop, stopping at the dock for a few seconds after it has completed a turn. This is archived using a loop function that calculates the position of the airship at any given time.
 
