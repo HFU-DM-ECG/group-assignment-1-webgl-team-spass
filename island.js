@@ -76,6 +76,7 @@ var flightMode = false;
 
 // loading in the 3D models, saving them into usable variables and adding them to the scene.
 loader.load('models/insel.glb', function (gltf) { 
+    console.log(gltf.scene.children[0]);
     // its always children[0] because the child gets removed from gltf.scene once you add it to the actual scene
     island1.add(gltf.scene.children[0]); 
     island1.children[0].children[0].castShadow = true;
@@ -165,10 +166,6 @@ function flyLoop(object, midPosition, currentTime, timescale, x_amp, y_amp, z_am
         object.position.y = midPosition.y + Math.cos(0) * y_amp;
         object.position.z = midPosition.z + Math.cos(0) * z_amp - z_amp;
     }
-}
-
-// alternative to flyLoop in circles
-function flyLoopBezier(object, currentTime) { 
 }
 
 function animate() {
