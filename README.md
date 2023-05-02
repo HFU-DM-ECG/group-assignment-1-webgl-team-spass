@@ -21,6 +21,12 @@ In order to load a 3D model, [three.js](https://threejs.org) can be used. Follow
 
 # Explanation
 
+## Installation
+1. Clone the repository and open the folder using Visual Studio Code
+2. Install the "Live Server" extension
+3. Select the index.html file and press the "Go Live" button at the bottom right. Wait until it displays the url it is running on.
+4. If the browser doesn't open automatically, copy the url from the terminal and paste it into the browser of your choice.
+
 ## Geometry and models
 The models are created using 3ds Max and loaded in using the GLTFLoader from threejs.
 
