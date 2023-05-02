@@ -37,19 +37,10 @@ directionalLight.color.setHSL(0.9, 1, 0.9);
 directionalLight.position.set(-2.5, 10, -2.5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 2048
+scene.add(directionalLight);
 const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 1);
 directionalLightHelper.visible = false;
 scene.add(directionalLightHelper);
-
-/// shadows from the sun
-const shadowValue = 30
-directionalLight.shadow.camera.left = -shadowValue;
-directionalLight.shadow.camera.right = shadowValue;
-directionalLight.shadow.camera.top = shadowValue;
-directionalLight.shadow.camera.bottom = -shadowValue;
-directionalLight.shadow.camera.far = 3500;
-directionalLight.shadow.bias = -0.000001;
-scene.add(directionalLight);
 
 // renderer
 const renderer = new THREE.WebGLRenderer();
